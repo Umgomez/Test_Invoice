@@ -16,5 +16,4 @@ Se estará implementando Entity Framework Core 6. Para ejecutar la migración si
 	"Data Source="SERVER",1433;Initial Catalog=Test_Invoice; Integrated Security=False;User ID=USUARIO;Password=CONTRASEÑA;Connection Timeout=120;MultipleActiveResultSets=true;TrustServerCertificate=True;"
 
 ### Correr los siguientes comandos en el 'Package Manager Console'
-	Add-Migration InitialMigration
 	Update-Database
