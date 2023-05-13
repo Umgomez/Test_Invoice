@@ -33,6 +33,9 @@ public class InvoiceDetailConfiguration
             opt.HasOne(x => x.Customers)
               .WithMany()
               .HasForeignKey(x => x.Customer_ID);
+            opt.HasOne(x => x.Products)
+              .WithMany()
+              .HasForeignKey(x => x.Product_ID);
             #endregion
         });
 

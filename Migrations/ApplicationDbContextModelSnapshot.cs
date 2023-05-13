@@ -214,6 +214,9 @@ namespace Test_Invoice.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("Product_ID")
+                        .HasColumnType("int");
+
                     b.Property<int>("Qty")
                         .HasColumnType("int");
 
@@ -235,11 +238,106 @@ namespace Test_Invoice.Migrations
                         .IsUnique()
                         .HasDatabaseName("UQ_InvoiceDetails");
 
+                    b.HasIndex("Product_ID");
+
                     b.ToTable("InvoiceDetail", (string)null);
 
                     b.HasCheckConstraint("CHK_Price", "Price <> ''");
 
                     b.HasCheckConstraint("CHK_Qty", "Qty <> ''");
+                });
+
+            modelBuilder.Entity("Test_Invoice.Models.Product", b =>
+                {
+                    b.Property<int>("Product_ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Product_ID"), 1L, 1);
+
+                    b.Property<string>("CodeProduct")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Discontinued")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<decimal>("SalePrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<short>("UnitsInStock")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Product_ID");
+
+                    b.HasIndex("Product_ID", "ProductName")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_Products");
+
+                    b.ToTable("Product", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Product_ID = 1,
+                            CodeProduct = "EQ-1",
+                            Discontinued = false,
+                            ProductName = "Nevera LG 10pies",
+                            SalePrice = 30192.72m,
+                            UnitPrice = 26254.54m,
+                            UnitsInStock = (short)408
+                        },
+                        new
+                        {
+                            Product_ID = 2,
+                            CodeProduct = "EQ-2",
+                            Discontinued = false,
+                            ProductName = "Lavadora Nedoka",
+                            SalePrice = 17825m,
+                            UnitPrice = 15500m,
+                            UnitsInStock = (short)602
+                        },
+                        new
+                        {
+                            Product_ID = 3,
+                            CodeProduct = "EQ-3",
+                            Discontinued = false,
+                            ProductName = "Televisor 55 Pulgadas",
+                            SalePrice = 42536.13m,
+                            UnitPrice = 36987.94m,
+                            UnitsInStock = (short)325
+                        },
+                        new
+                        {
+                            Product_ID = 4,
+                            CodeProduct = "EQ-4",
+                            Discontinued = false,
+                            ProductName = "Abanico KDK pared",
+                            SalePrice = 6285.25m,
+                            UnitPrice = 5465.43m,
+                            UnitsInStock = (short)365
+                        },
+                        new
+                        {
+                            Product_ID = 5,
+                            CodeProduct = "EQ-5",
+                            Discontinued = false,
+                            ProductName = "Estufa 6 quemadores",
+                            SalePrice = 24610.29m,
+                            UnitPrice = 21400.25m,
+                            UnitsInStock = (short)124
+                        });
                 });
 
             modelBuilder.Entity("Test_Invoice.Models.Customer", b =>
@@ -288,7 +386,15 @@ namespace Test_Invoice.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Test_Invoice.Models.Product", "Products")
+                        .WithMany()
+                        .HasForeignKey("Product_ID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Customers");
+
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

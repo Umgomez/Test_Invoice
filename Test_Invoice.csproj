@@ -14,10 +14,15 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\ViewModel\" />
+    <Folder Include="Data\CustomerType\" />
+    <Folder Include="Data\Customer\" />
+    <Folder Include="Data\CustomerStatus\" />
+    <Folder Include="Data\InvoiceDetail\" />
+    <Folder Include="Data\Invoice\" />
   </ItemGroup>
 
 </Project>

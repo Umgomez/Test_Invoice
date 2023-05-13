@@ -1,0 +1,179 @@
+﻿@model InvoiceViewModel
+@{
+    ViewData["Title"] = "Invoice List";
+    var list = ViewBag.Invoices;
+}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Lista de Facturas</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="@Url.Action("CustomerList", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active">Lista de Facturas</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <a class="btn btn-app bg-info" data-toggle="modal" data-target="#modal-lg-create">
+                            <i class="fas fa-plus"></i> Nueva Factura
+                        </a>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(ViewBag.Message))
+                {
+                    if (ViewBag.Message == "well")
+                    {
+                        <div class="col-lg-12 mb-3">
+                            <div id="alert" class="alert alert-success alert-dismissible animated fadeInDown animation-delay-4">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                <h5><i class="icon fas fa-check"></i> Good!</h5>
+                                Factura registrada con éxito!
+                            </div>
+                        </div>
+                    }
+                    if (ViewBag.Message == "update")
+                    {
+                        <div class="col-lg-12 mb-3">
+                            <div id="alert" class="alert alert-info alert-dismissible animated fadeInDown animation-delay-4">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                <h5><i class="icon fas fa-info"></i> Good!</h5>
+                                Factura actualizada con éxito!
+                            </div>
+                        </div>
+                    }
+                    if (ViewBag.Message == "delete")
+                    {
+                        <div class="col-lg-12 mb-3">
+                            <div id="alert" class="alert alert-info alert-dismissible animated fadeInDown animation-delay-4">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                <h5><i class="icon fas fa-info"></i> Good!</h5>
+                                Factura borrada con éxito!
+                            </div>
+                        </div>
+                    }
+                    if (ViewBag.Message == "bad")
+                    {
+                        <div class="col-lg-12 mb-3">
+                            <div id="alert" class="alert alert-danger alert-dismissible animated fadeInDown animation-delay-4">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                <h5><i class="icon fas fa-ban"></i> Bad!</h5>
+                                Ocurrió un error al realizar la transacción, validar si el cliente ya existe.
+                            </div>
+                        </div>
+                    }
+                }
+                <div class="card">
+                    <div class="card-body">
+                        @if (list.Data.Count > 0)
+                        {
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre del Cliente</th>
+                                        <th>ITBIS</th>
+                                        <th>Sub Total</th>
+                                        <th>Total</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var cus in list.Data)
+                                    {
+                                        <tr>
+                                            <td>@cus["CustomerName"]</td>
+                                            <td>@cus["TotalItbis"]</td>
+                                            <td>@cus["SubTotal"]</td>
+                                            <td>@cus["Total"]</td>
+                                            <td class="text-center justify-content-between">
+                                                <a class="btn bg-gradient-info btn-xs" asp-action="EditInvoice" asp-controller="Home" asp-route-id="@cus["Invoice_ID"]">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </a>
+                                                <a class="btn bg-gradient-danger btn-xs" asp-action="DeleteInvoice" asp-controller="Home" asp-route-id="@cus["Invoice_ID"]">
+                                                    <i class="fas fa-trask"></i> Eliminar
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Nombre del Cliente</th>
+                                        <th>ITBIS</th>
+                                        <th>Sub Total</th>
+                                        <th>Total</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="card">
+                                <div class="card-header">
+                                    Aún no hay facturas registradas
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+
+                <!-- /.modal Crear Cliente -->
+                <div class="modal fade" id="modal-lg-create">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info">
+                                <h4 class="modal-title">Creando Factura</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form asp-action="CreateInvoice" method="post" enctype="multipart/form-data">
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <!-- form start -->
+                                        <div class="card-body">
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <div class="form-group-sm">
+                                                <label asp-for="Customer_ID">Cliente</label>
+                                                <select id="Customer_ID" asp-for="Customer_ID" class="form-control" asp-items="@ViewBag.Customers" required>
+                                                    <option selected=""></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save "></i> Guardar</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        setTimeout(function () {
+            $('#alert').alert('close');
+        }, 5000);
+    </script>
+}

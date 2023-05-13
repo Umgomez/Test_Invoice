@@ -16,4 +16,7 @@ public class InvoiceDetail
 
     public int Customer_ID { get; set; }
     public Customer Customers { get; set; }
+
+    public int Product_ID { get; set; }
+    public Product Products { get; set; }
 }

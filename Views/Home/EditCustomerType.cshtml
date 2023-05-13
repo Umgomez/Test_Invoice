@@ -1,0 +1,55 @@
+﻿@model CustomerTypeViewModel
+@{
+    ViewData["Title"] = "Edit Customer Type";
+}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Editando Tipo de Cliente</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="@Url.Action("CustomerList", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("CustomerTypeList", "Home")">Lista de Tipo de Clientes</a></li>
+                    <li class="breadcrumb-item active">Editando Tipo de Cliente</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">Editado por: <small>Ubaldin Gómez</small></h3>
+                    </div>
+
+                    <form asp-action="EditCustomerType" method="post" enctype="multipart/form-data">
+                        <div class="card-body">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="CustomerType_ID" />
+                            <div class="form-group-sm">
+                                <label asp-for="CustomerTypeDisplay">Tipo de Cliente</label>
+                                <input type="text" class="form-control" id="CustomerTypeDisplay" asp-for="CustomerTypeDisplay" placeholder="Tipo de Cliente" required>
+                            </div>
+                            <div class="form-group-sm">
+                                <label asp-for="Order">Orden</label>
+                                <input type="number" class="form-control" id="Order" asp-for="Order" placeholder="Dirección" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <a href="@Url.Action("CustomerTypeList", "Home")" class="btn btn-sm btn-default">Cancelar</a>
+                            <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save "></i> Actualizar</button>
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

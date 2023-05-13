@@ -12,6 +12,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<CustomerType> CustomerTypes { get; set; }
     public DbSet<Invoice> Invoices { get; set; }
     public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
+    public DbSet<Product> Products { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,6 +21,7 @@ public class ApplicationDbContext : DbContext
         CustomerTypeConfiguration.Configure(modelBuilder);
         InvoiceConfiguration.Configure(modelBuilder);
         InvoiceDetailConfiguration.Configure(modelBuilder);
+        ProductConfiguration.Configure(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
 

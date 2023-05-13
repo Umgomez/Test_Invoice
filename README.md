@@ -9,7 +9,7 @@ Prueba de programación Schad
 
 
 ### Cambiar la cadena de conexión en el archivo 'appsettings.json'
-	"Data Source="SERVER",1433;Initial Catalog=Test_Invoice; Integrated Security=False;User ID=USUARIO;Password=CONTRASEÑA;Connection Timeout=120;MultipleActiveResultSets=true;"
+	"Data Source="SERVER",1433;Initial Catalog=Test_Invoice; Integrated Security=False;User ID=USUARIO;Password=CONTRASEÑA;Connection Timeout=120;MultipleActiveResultSets=true;TrustServerCertificate=True;"
 
 ### Correr los siguientes comandos en el 'Package Manager Console'
 	Add-Migration InitialMigration
