@@ -1,0 +1,308 @@
+﻿@{
+    ViewData["Title"] = "Create Invoice";
+}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Creando Factura</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="@Url.Action("CustomerList", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("InvoiceList", "Home")">Lista de Facturas</a></li>
+                    <li class="breadcrumb-item active">Creando Factura</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<form method="post" enctype="multipart/form-data">
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="col-md-4">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Datos del Cliente</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group-sm">
+                                <label for="Customer_ID">Cliente</label>
+                                <select id="Customer_ID" name="Customer_ID" class="form-control select2" asp-items="@ViewBag.Customers" required>
+                                    <option selected=""></option>
+                                </select>
+                            </div>
+                            <div id="customerDetail" style="display:none;">
+                                <input type="hidden" id="ID1" />
+                                <div class="form-group-sm">
+                                    <label for="Address">Dirección del Cliente</label>
+                                    <input type="text" class="form-control" id="Address" name="Address" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Datos del Producto</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group-sm">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="Product_ID">Producto</label>
+                                        <select id="Product_ID" name="Product_ID" class="form-control select2" asp-items="@ViewBag.Products" disabled>
+                                            <option selected=""></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="Qty">Cantidad</label>
+                                        <input type="number" class="form-control" id="Qty" name="Qty" min="1" value="1" disabled />
+                                    </div>
+                                    <div class="col-3">
+                                        <button id="btnAgregar" type="button" class="btn btn-primary mt-4" disabled><i class="fas fa-plus "></i> Agregar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="productDetail" style="display:none;">
+                                <input type="hidden" id="ID2" />
+                                <div class="form-group-sm">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <label for="CodeProduct">Código</label>
+                                            <input type="text" class="form-control" id="CodeProduct" name="CodeProduct" disabled />
+                                        </div>
+                                        <div class="col-3">
+                                            <label for="UnitsInStock">Stock</label>
+                                            <input type="text" class="form-control" id="UnitsInStock" name="UnitsInStock" disabled />
+                                        </div>
+                                        <div class="col-3">
+                                            <label for="SalePrice">Precio de venta</label>
+                                            <input type="text" class="form-control" id="SalePrice" name="SalePrice" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Resumen</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group-sm">
+                                <label for="subTotal">Sub Total</label>
+                                <input id="subTotal" type="text" class="form-control" value="$0.00" readonly />
+                            </div>
+                            <div class="form-group-sm">
+                                <label for="tax">ITBIS</label>
+                                <input id="tax" type="text" class="form-control" value="$0.00" readonly />
+                            </div>
+                            <div class="form-group-sm">
+                                <label for="total">Total General</label>
+                                <input id="total" type="text" class="form-control" value="$0.00" readonly />
+                            </div>
+                            <button id="btnConfirmar" type="button" class="btn btn-primary mt-4" disabled><i class="fas fa-save"></i> Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div id="list" class="card" style="display:none;">
+                        <div class="card-body table-responsive p-0">
+                            <table id="listTable" class="table table-hover text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre del Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>ITBIS</th>
+                                        <th>Precio Unidad</th>
+                                        <th>Sub Total</th>
+                                        <th>Total</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+@section Scripts {
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        var listProducts = [];
+        var deleteProduct = (index) => {
+            listProducts = [...listProducts.slice(0, index), ...listProducts.slice(index + 1)];
+        }
+        var summaryInvoice = (_listProducts) => {
+            let subTotal = 0;
+            let tax = 0;
+            let total = 0;
+            $("#subTotal").val("0.00");
+            $("#tax").val("0.00");
+            $("#total").val("0.00");
+
+            for (product of _listProducts){
+                subTotal += product.subTotal;
+                tax += product.totalItbis;
+                total += product.total;
+            }
+            $("#subTotal").val(new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", }).format(subTotal.toFixed(2)));
+            $("#tax").val(new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", }).format(tax.toFixed(2)));
+            $("#total").val(new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", }).format(total.toFixed(2)));
+        }
+        var showTable = (_listProducts) => {
+            let stringTable = "";
+            for (let i = 0; i < _listProducts.length; i++){
+                let product = _listProducts[i];
+                if (product.product_ID !== 0) {
+                    document.getElementById("productDetail").style.display = "block";
+                    document.getElementById("list").style.display = "block";
+                    $dropdown = $("#Product_ID");
+                    $dropdown[0].selectedIndex = -1;
+                    document.getElementById("Qty").value = 1;
+                    document.getElementById("ID2").value = '';
+                    document.getElementById("CodeProduct").value = '';
+                    document.getElementById("UnitsInStock").value = '';
+                    document.getElementById("SalePrice").value = '';
+
+                    let itbis = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", }).format(product.totalItbis.toFixed(2));
+                    let price = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", }).format(product.price.toFixed(2));
+                    let subTotal = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", }).format(product.subTotal.toFixed(2));
+                    let total = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", }).format(product.total.toFixed(2));
+                    stringTable += (`<tr>
+                                        <td>${ product.codeProduct }</td>
+                                        <td>${ product.productName }</td>
+                                        <td>${ product.qty }</td>
+                                        <td>${ itbis }</td>
+                                        <td>${ price }</td>
+                                        <td>${ subTotal }</td>
+                                        <td>${ total }</td>
+                                        <td> <button class="btn btn-sm btn-danger" onclick="deleteProduct(${i});showTable(listProducts)"><i class="fas fa-trash"></i></button></td>
+                                     </tr>`);
+                }
+            }
+            $('#listTable > tbody *').remove();
+            $('#listTable > tbody:last-child').append(stringTable);
+            summaryInvoice(_listProducts);
+        }
+
+        $(document).ready(function () {
+            $("#Customer_ID").change(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("LoadCustomerDetail")',
+                    dataType: 'json',
+                    data: { id: $("#Customer_ID").val() },
+                    success: function (result) {
+                        //console.log(result);
+                        if (result.length) {
+                            document.getElementById("customerDetail").style.display = "block";
+                            document.getElementById("ID1").value = result[0].customer_ID;
+                            document.getElementById("Address").value = result[0].address;
+                            document.getElementById("Product_ID").removeAttribute('disabled');
+                            document.getElementById("Qty").removeAttribute('disabled');
+                            document.getElementById("btnAgregar").removeAttribute('disabled');
+                            document.getElementById("btnConfirmar").removeAttribute('disabled');
+                        }
+                        else { 
+                            document.getElementById("customerDetail").style.display = "none";
+                            document.getElementById("Product_ID").setAttribute('disabled', '');
+                            document.getElementById("Qty").setAttribute('disabled', '');
+                            document.getElementById("btnAgregar").setAttribute('disabled', '');
+                            document.getElementById("btnConfirmar").removeAttribute('disabled');
+                        }
+                    },
+                    error: function (ex) {
+                        console.log('Failed to retrieve customers. ' + ex);
+                    }
+                });
+                return false;
+            });
+
+            $("#Product_ID").change(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("LoadProductDetail")',
+                    dataType: 'json',
+                    data: { id: $("#Product_ID").val() },
+                    success: function (result) {
+                        let salePrice = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", }).format(result[0].salePrice.toFixed(2));
+                        //console.log(result);
+                        if (result.length) {
+                            document.getElementById("productDetail").style.display = "block";
+                            document.getElementById("ID2").value = result[0].product_ID;
+                            document.getElementById("CodeProduct").value = result[0].codeProduct;
+                            document.getElementById("UnitsInStock").value = result[0].unitsInStock;
+                            document.getElementById("SalePrice").value = salePrice;
+                        }
+                        else {
+                            document.getElementById("productDetail").style.display = "none";
+                        }
+                    },
+                    error: function (ex) {
+                        //console.log('Failed to retrieve products. ' + ex);
+                    }
+                });
+                return false;
+            });
+
+            $("#btnAgregar").click(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("AddProductDetail")',
+                    dataType: 'json',
+                    data: { 
+                        productId: $("#Product_ID").val(),
+                        customerId: $("#Customer_ID").val(),
+                        qty: $("#Qty").val()
+                    },
+                    success: function (result) {
+                        //console.log(result);
+                        listProducts.push(result);
+                        showTable(listProducts);
+                    },
+                    error: function (ex) {
+                        console.log('Failed to retrieve products. ' + ex);
+                    }
+                });
+                return false;
+            });
+
+            $("#btnConfirmar").click(function () {
+                if ($("#total").val() !== "$0.00") {
+                    let data = {
+                        Customer_ID: $("#Customer_ID").val(),
+                        TotalItbis: $("#tax").val(),
+                        SubTotal: $("#subTotal").val(),
+                        Total: $("#total").val(),
+                        InvoiceDetails: listProducts
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("CreateInvoice")',
+                        dataType: 'json',
+                        data,
+                        success: function (result) {
+                            //console.log(result);
+                            window.location = '/Home/InvoiceList?m=' + result;
+                        }
+                    });
+                    return false;
+                }
+            });
+        });
+    </script>
+}

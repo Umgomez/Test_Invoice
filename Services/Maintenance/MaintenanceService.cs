@@ -8,6 +8,7 @@ public interface IMaintenanceService
     Task<Return> GetAllCustomers();
     Task<Return> GetAllCustomerTypes();
     Task<Return> GetAllCustomerStatus();
+    Task<Return> GetAllProducts();
 }
 
 public class MaintenanceService : IMaintenanceService
@@ -44,6 +45,16 @@ public class MaintenanceService : IMaintenanceService
         var sql = new Sql(this.context);
         var file = "GetAllCustomerTypes";
         var query = File.ReadAllText($"Data/CustomerType/{file}.sql");
+        var entityData = await sql.OneQuery(query);
+
+        return new Return($"File '{file}' data").SetData(entityData);
+    }
+
+    public async Task<Return> GetAllProducts()
+    {
+        var sql = new Sql(this.context);
+        var file = "GetAllProducts";
+        var query = File.ReadAllText($"Data/Product/{file}.sql");
         var entityData = await sql.OneQuery(query);
 
         return new Return($"File '{file}' data").SetData(entityData);

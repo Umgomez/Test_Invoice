@@ -12,8 +12,22 @@ Puede descargar el SDK aquí ---> https://dotnet.microsoft.com/es-es/download/do
 
 Se estará implementando Entity Framework Core 6. Para ejecutar la migración siga los siguientes pasos:
 
-### Cambiar la cadena de conexión en el archivo 'appsettings.json' por la de su servidor
-	"Data Source="SERVER",1433;Initial Catalog=Test_Invoice; Integrated Security=False;User ID=USUARIO;Password=CONTRASEÑA;Connection Timeout=120;MultipleActiveResultSets=true;TrustServerCertificate=True;"
-
-### Correr los siguientes comandos en el 'Package Manager Console'
+### 1. Cambiar la cadena de conexión en el archivo 'appsettings.json' por la de su servidor
+	"Data Source={SERVER},1433;Initial Catalog={DATABASE}; Integrated Security=False;User ID={USER};Password={PASSWORD};Connection Timeout=120;MultipleActiveResultSets=true;TrustServerCertificate=True;"
+	
+## 2 Migración Entity Framework Core
+### 2.1 Correr los siguientes comandos en el 'Package Manager Console'
 	Update-Database
+
+### 2.2 (Si no se tiene Visual Studio) Correr los siguientes comandos en el 'Powershell'
+Hay que instalar una unica vez la herramienta Entity Framework Core globalmente, y el paquete `Microsoft.EntityFrameworkCore.Design` debe estar previamente instalado en el proyecto.
+```sh
+$ dotnet tool install --global dotnet-ef
+$ dotnet tool update --global dotnet-ef
+```
+
+```sh
+$ dotnet ef database update
+```
+
+### 2.3 (En caso de que no se pueda correr las migraciones por la herramienta) Correr el siguiente [script](./Data/Script_Test_Invoice.sql) en la base de datos

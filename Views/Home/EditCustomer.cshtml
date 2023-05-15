@@ -34,11 +34,11 @@
                             <input type="hidden" asp-for="Customer_ID" />
                             <div class="form-group-sm">
                                 <label asp-for="CustomerName">Nombre del Cliente</label>
-                                <input type="text" class="form-control" id="CustomerName" asp-for="CustomerName" placeholder="Nombre del Cliente" required>
+                                <input type="text" class="form-control" id="CustomerName" asp-for="CustomerName" placeholder="Nombre del Cliente" maxlength="250" required>
                             </div>
                             <div class="form-group-sm">
                                 <label for="Address">Dirección</label>
-                                <input type="text" class="form-control" id="Address" asp-for="Address" placeholder="Dirección" required>
+                                <input type="text" class="form-control" id="Address" asp-for="Address" placeholder="Dirección" maxlength="500" required>
                             </div>
                             <div class="form-group-sm">
                                 <label asp-for="CustomerType_ID">Tipo de Cliente</label>

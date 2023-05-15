@@ -1,0 +1,68 @@
+﻿@model ProductViewModel
+@{
+    ViewData["Title"] = "Edit Product";
+}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Editando Producto</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="@Url.Action("CustomerList", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("ProductList", "Home")">Lista de Productos</a></li>
+                    <li class="breadcrumb-item active">Editando Product</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">Editado por: <small>Ubaldin Gómez</small></h3>
+                    </div>
+                    <form asp-action="EditProduct" method="post" enctype="multipart/form-data">
+                        <div class="card-body">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="Product_ID" />
+                            <div class="form-group-sm">
+                                <label for="CodeProduct">Código</label>
+                                <input type="text" class="form-control" id="CodeProduct" asp-for="CodeProduct" placeholder="Código" maxlength="100" required>
+                            </div>
+                            <div class="form-group-sm">
+                                <label asp-for="ProductName">Nombre del Producto</label>
+                                <input type="text" class="form-control" id="ProductName" asp-for="ProductName" placeholder="Nombre del Producto" maxlength="300" required>
+                            </div>
+                            <div class="form-group-sm">
+                                <label asp-for="UnitsInStock">Stock</label>
+                                <input type="text" class="form-control" id="UnitsInStock" asp-for="UnitsInStock" placeholder="Stock" required>
+                            </div>
+                            <div class="form-group-sm">
+                                <label asp-for="UnitPrice">Precio por Unidad</label>
+                                <input type="text" class="form-control" id="UnitPrice" asp-for="UnitPrice" placeholder="Precio por Unidad" required>
+                            </div>
+                            <div class="form-group-sm">
+                                <label asp-for="SalePrice">Precio de Venta</label>
+                                <input type="text" class="form-control" id="SalePrice" asp-for="SalePrice" placeholder="Precio de Venta" required>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input custom-control-input-danger" asp-for="Discontinued" type="checkbox" id="Discontinued">
+                                <label asp-for="Discontinued" class="custom-control-label">Descontinuado</label>
+                            </div> 
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <a href="@Url.Action("ProductList", "Home")" class="btn btn-sm btn-default">Cancelar</a>
+                            <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save "></i> Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

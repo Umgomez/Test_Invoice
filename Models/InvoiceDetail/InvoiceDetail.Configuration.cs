@@ -22,11 +22,11 @@ public class InvoiceDetailConfiguration
               .HasPrecision(18, 2);
 
             #region Constraints
-            opt.HasIndex(x => new { x.Customer_ID })
+            opt.HasIndex(x => new { x.InvoiceDetail_ID })
               .HasDatabaseName("UQ_InvoiceDetails")
               .IsUnique();
-            opt.HasCheckConstraint("CHK_Qty", "Qty <> ''");
-            opt.HasCheckConstraint("CHK_Price", "Price <> ''");
+            opt.HasCheckConstraint("CHK_Qty", "Qty <> 0");
+            opt.HasCheckConstraint("CHK_Price", "Price <> 0");
             #endregion
 
             #region Relationships
@@ -36,6 +36,9 @@ public class InvoiceDetailConfiguration
             opt.HasOne(x => x.Products)
               .WithMany()
               .HasForeignKey(x => x.Product_ID);
+            opt.HasOne(x => x.Invoices)
+              .WithMany()
+              .HasForeignKey(x => x.Invoice_ID);
             #endregion
         });
 

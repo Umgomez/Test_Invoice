@@ -11,10 +11,8 @@ public class Invoice
     public decimal TotalItbis { get; set; }
     public decimal SubTotal { get; set; }
     public decimal Total { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     public int Customer_ID { get; set; }
     public Customer Customers { get; set; }
-
-    public int InvoiceDetail_ID { get; set; }
-    public InvoiceDetail InvoiceDetails { get; set; }
 }

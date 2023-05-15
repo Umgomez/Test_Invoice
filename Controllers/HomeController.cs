@@ -22,6 +22,7 @@ namespace Test_Invoice.Controllers
         public SelectList Customers { get; set; }
         public SelectList CustomerStatus { get; set; }
         public SelectList CustomerTypes { get; set; }
+        public SelectList Products { get; set; }
 
         public HomeController(ApplicationDbContext context, 
             IMaintenanceService maintenanceService,
@@ -188,6 +189,143 @@ namespace Test_Invoice.Controllers
             }
         }
 
+        #endregion
+
+        #region Mantenimiento a Productos
+
+        public async Task<IActionResult> ProductList(string m)
+        {
+            dynamic products = await maintenanceService.GetAllProducts();
+
+            foreach (var cus in products.Data)
+            {
+                int encrytedId = cus["Product_ID"];
+                cus["Product_ID"] = protector.Protect(Convert.ToString(encrytedId));
+            }
+
+            ViewData["Products"] = products;
+
+            if (!string.IsNullOrEmpty(m))
+                ViewBag.Message = m;
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct(ProductViewModel model, CancellationToken cancellationToken)
+        {
+            if (ModelState.IsValid)
+            {
+                var productExist = await context.Products.FirstOrDefaultAsync(x => x.CodeProduct == model.CodeProduct.Trim(), cancellationToken);
+                if (productExist == null)
+                {
+                    decimal salePrice = (model.UnitPrice * (model.PorcentajeGanancia / 100)) + model.UnitPrice;
+                    var entity = new Product
+                    {
+                        CodeProduct = model.CodeProduct.Trim(),
+                        ProductName = model.ProductName.Trim(),
+                        UnitsInStock = model.UnitsInStock,
+                        UnitPrice = model.UnitPrice,
+                        SalePrice = salePrice,
+                        Discontinued = model.Discontinued
+                    };
+                    context.Products.Add(entity);
+                    await context.SaveChangesAsync(cancellationToken);
+                    string m = "well";
+                    return RedirectToAction("ProductList", new { m });
+                }
+                else
+                {
+                    string m = "bad";
+                    return RedirectToAction("ProductList", new { m });
+                }
+            }
+            return null;
+        }
+
+        public async Task<IActionResult> EditProduct(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                string decryptedId = protector.Unprotect(id);
+                var product = await context.Products.FirstOrDefaultAsync(x => x.Product_ID == Convert.ToInt32(decryptedId));
+
+                var model = new ProductViewModel
+                {
+                    Product_ID = Convert.ToInt32(decryptedId),
+                    CodeProduct = product.CodeProduct.Trim(),
+                    ProductName = product.ProductName.Trim(),
+                    UnitsInStock = product.UnitsInStock,
+                    UnitPrice = product.UnitPrice,
+                    SalePrice = product.SalePrice,
+                    Discontinued = product.Discontinued
+                };
+
+                return View(model);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProduct(ProductViewModel model, CancellationToken cancellationToken)
+        {
+            var product = await context.Products.FirstOrDefaultAsync(x => x.Product_ID == model.Product_ID, cancellationToken);
+            if (product != null)
+            {
+                product.CodeProduct = model.CodeProduct.Trim();
+                product.ProductName = model.ProductName.Trim();
+                product.UnitsInStock = model.UnitsInStock;
+                product.UnitPrice = model.UnitPrice;
+                product.SalePrice = model.SalePrice;
+                product.Discontinued = model.Discontinued;
+
+                context.Products.Update(product);
+                await context.SaveChangesAsync(cancellationToken);
+
+                string m = "update";
+                return RedirectToAction("ProductList", new { m });
+            }
+            else
+            {
+                string m = "bad";
+                return RedirectToAction("ProductList", new { m });
+            }
+        }
+
+        public async Task<IActionResult> DeleteProduct(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                string decryptedId = protector.Unprotect(id);
+                var product = await context.Products.FirstOrDefaultAsync(x => x.Product_ID == Convert.ToInt32(decryptedId));
+                var model = new ProductViewModel
+                {
+                    Product_ID = Convert.ToInt32(decryptedId),
+                    CodeProduct = product.CodeProduct.Trim(),
+                    ProductName = product.ProductName.Trim()
+                };
+                return View(model);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteProduct(ProductViewModel model, CancellationToken cancellationToken)
+        {
+            var product = await context.Products.FirstOrDefaultAsync(x => x.Product_ID == model.Product_ID, cancellationToken);
+            if (product != null)
+            {
+                context.Products.Remove(product);
+                await context.SaveChangesAsync(cancellationToken);
+                string m = "delete";
+                return RedirectToAction("ProductList", new { m });
+            }
+            else
+            {
+                string m = "bad";
+                return RedirectToAction("ProductList", new { m });
+            }
+        }
         #endregion
 
         #region Mantenimiento a Tipos de Clientes
@@ -441,7 +579,6 @@ namespace Test_Invoice.Controllers
 
         #endregion
 
-
         #region Factura
 
         public async Task<IActionResult> InvoiceList(string m)
@@ -459,29 +596,185 @@ namespace Test_Invoice.Controllers
 
             ViewData["Invoices"] = invoices;
 
-            var customers = await context.Customers.Where(x => x.CustomerStatus.CustomerStatusDisplay == "Activo").ToListAsync();
-            foreach (var item in customers)
-                Customers = new SelectList(customers, nameof(item.Customer_ID), nameof(item.CustomerName));
-
-
-            ViewData["Customers"] = Customers;
-
             if (!string.IsNullOrEmpty(m))
                 ViewBag.Message = m;
 
             return View();
         }
 
+        public async Task<IActionResult> CreateInvoice()
+        {
+            var customers = await context.Customers.Where(x => x.CustomerStatus.CustomerStatusDisplay == "Activo").ToListAsync();
+            foreach (var item in customers)
+                Customers = new SelectList(customers, nameof(item.Customer_ID), nameof(item.CustomerName));
+
+            ViewData["Customers"] = Customers;
+
+            var products = await context.Products.Where(x => x.Discontinued == false).ToListAsync();
+            foreach (var item in products)
+                Products = new SelectList(products, nameof(item.Product_ID), nameof(item.ProductName));
+
+            ViewData["Products"] = Products;
+
+            return View();
+        }
+
+        public async Task<IActionResult> DetailInvoice(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                string decryptedId = protector.Unprotect(id);
+                var invoice = await context.InvoiceDetails.Include(x => x.Invoices).Include(x => x.Customers).Include(x => x.Products).Where(x => x.Invoice_ID == Convert.ToInt32(decryptedId)).ToListAsync();
+                foreach (var item in invoice)
+                {
+                    ViewData["Customer"] = item.Customers;
+                    ViewData["Invoices"] = item.Invoices;
+                }
+
+                decimal itbis = 0;
+                decimal subTotal = 0;
+                decimal total = 0;
+                // Primero debo sumar los totales de la lista 
+                foreach (var item in invoice)
+                {
+                    if (item.Customer_ID != 0)
+                    {
+                        itbis += item.TotalItbis;
+                        subTotal += item.SubTotal;
+                        total += item.Total;
+                    }
+                }
+                ViewBag.SubTotal = subTotal;
+                ViewBag.TotalItbis = itbis;
+                ViewBag.Total = total;
+
+                ViewData["InvoiceDetails"] = invoice;
+            }
+            return View();
+        }
         #endregion
 
-
-
-
+        #region Helpers
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public async Task<JsonResult> LoadCustomerDetail(int Id, CancellationToken cancellationToken)
+        {
+            var result = await context.Customers.Where(s => s.Customer_ID == Id).ToListAsync(cancellationToken);
+            return Json(result);
+        }
+
+        public async Task<JsonResult> LoadProductDetail(int Id, CancellationToken cancellationToken)
+        {
+            var result = await context.Products.Where(s => s.Product_ID == Id).ToListAsync(cancellationToken);
+            return Json(result);
+        }
+
+        public async Task<InvoiceViewModel> AddProductDetail(int productId, int customerId, int qty, CancellationToken cancellationToken)
+        {
+            var product = await context.Products.FirstOrDefaultAsync(x => x.Product_ID == productId, cancellationToken);
+
+            var model = new InvoiceViewModel();
+            
+            decimal subTotal = 0;
+            decimal totalItbis = 0;
+            decimal total = 0;
+
+            if (product != null) 
+            {
+                totalItbis = (product.SalePrice * (decimal)0.18) * qty;
+                subTotal = (totalItbis + product.SalePrice);
+                total = subTotal * qty;
+
+                model.Product_ID = productId;
+                model.CodeProduct = product.CodeProduct;
+                model.ProductName = product.ProductName;
+                model.Customer_ID = customerId;
+                model.Qty = qty;
+                model.Price = product.SalePrice;
+                model.Total = total;
+                model.SubTotal = subTotal;
+                model.TotalItbis = totalItbis;
+            }
+
+            return model;
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreateInvoice(InvoiceViewModel model, CancellationToken cancellationToken)
+        {
+            string m = string.Empty;
+
+            decimal itbis = 0;
+            decimal subTotal = 0;
+            decimal total = 0;
+            // Primero debo sumar los totales de la lista 
+            foreach (var item in model.InvoiceDetails)
+            {
+                if (item.Customer_ID != 0)
+                {
+                    itbis += item.TotalItbis;
+                    subTotal += item.SubTotal;
+                    total += item.Total;
+                }
+            }
+
+            var invoice = new Invoice
+            {
+                Customer_ID = model.Customer_ID,
+                TotalItbis = itbis,
+                SubTotal = subTotal,
+                Total = total
+            };
+
+            await context.Invoices.AddAsync(invoice, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            int id = invoice.Invoice_ID;
+
+            // Guardo la lista en InvoiceDetail
+            if (id != 0)
+            {
+                foreach (var detail in model.InvoiceDetails)
+                {
+                    if (detail.Customer_ID != 0)
+                    {
+                        var invoiceDetail = new InvoiceDetail
+                        {
+                            Qty = detail.Qty,
+                            Price = detail.Price,
+                            TotalItbis = detail.TotalItbis,
+                            SubTotal = detail.SubTotal,
+                            Total = detail.Total,
+                            Customer_ID = detail.Customer_ID,
+                            Product_ID = detail.Product_ID,
+                            Invoice_ID = id
+                        };
+
+                        await context.InvoiceDetails.AddAsync(invoiceDetail, cancellationToken);
+                        await context.SaveChangesAsync(cancellationToken);
+
+                        // Actualizar el inventario
+                        var product = await context.Products.FirstOrDefaultAsync(x => x.Product_ID == detail.Product_ID, cancellationToken);
+                        if (product != null)
+                        {
+                            product.UnitsInStock = (short)(product.UnitsInStock - detail.Qty);
+                            context.Products.Update(product);
+                            context.SaveChanges();
+                        }
+                    }
+                }
+                m = "well";
+            }
+            else
+                m = "bad";
+            
+            return Json(m);
+        }
+
+        #endregion
     }
 }

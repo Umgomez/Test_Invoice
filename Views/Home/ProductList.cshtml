@@ -1,18 +1,18 @@
-﻿@model CustomerStatusViewModel
+﻿@model ProductViewModel
 @{
-    ViewData["Title"] = "Customer Status";
-    var list = ViewBag.CustomerStatus;
+    ViewData["Title"] = "Product List";
+    var list = ViewBag.Products;
 }
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">Lista de Estatus</h1>
+                <h1 class="m-0">Lista de Productos</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="@Url.Action("CustomerStatusList", "Home")">Home</a></li>
-                    <li class="breadcrumb-item active">Lista de Estatus</li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("CustomerList", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active">Lista de Productos</li>
                 </ol>
             </div>
         </div>
@@ -25,7 +25,7 @@
                 <div class="card">
                     <div class="card-body">
                         <a class="btn btn-app bg-info" data-toggle="modal" data-target="#modal-lg-create">
-                            <i class="fas fa-plus"></i> Nuevo Estatus
+                            <i class="fas fa-plus"></i> Nuevo Producto
                         </a>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                             <div id="alert" class="alert alert-success alert-dismissible animated fadeInDown animation-delay-4">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                                 <h5><i class="icon fas fa-check"></i> Good!</h5>
-                                Estatus registrado con éxito!
+                                Producto registrado con éxito!
                             </div>
                         </div>
                     }
@@ -47,7 +47,7 @@
                             <div id="alert" class="alert alert-info alert-dismissible animated fadeInDown animation-delay-4">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                                 <h5><i class="icon fas fa-info"></i> Good!</h5>
-                                Estatus actualizado con éxito!
+                                Producto actualizado con éxito!
                             </div>
                         </div>
                     }
@@ -57,7 +57,7 @@
                             <div id="alert" class="alert alert-info alert-dismissible animated fadeInDown animation-delay-4">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                                 <h5><i class="icon fas fa-info"></i> Good!</h5>
-                                Estatus borrado con éxito!
+                                Producto borrado con éxito!
                             </div>
                         </div>
                     }
@@ -67,7 +67,7 @@
                             <div id="alert" class="alert alert-danger alert-dismissible animated fadeInDown animation-delay-4">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                                 <h5><i class="icon fas fa-ban"></i> Bad!</h5>
-                                Ocurrió un error al realizar la transacción, validar si el Estatus ya existe.
+                                Ocurrió un error al realizar la transacción, validar si el cliente ya existe.
                             </div>
                         </div>
                     }
@@ -79,8 +79,12 @@
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Tipo de Cliente</th>
-                                        <th>Orden</th>
+                                        <th>Código</th>
+                                        <th>Nombre del Producto</th>
+                                        <th>Stock</th>
+                                        <th>Precio de Costo</th>
+                                        <th>Precio de Venta</th>
+                                        <th>Descontinuado?</th>
                                         <th>Acción</th>
                                     </tr>
                                 </thead>
@@ -88,13 +92,17 @@
                                     @foreach (var cus in list.Data)
                                     {
                                         <tr>
-                                            <td>@cus["CustomerStatusDisplay"]</td>
-                                            <td>@cus["Order"]</td>
+                                            <td>@cus["CodeProduct"]</td>
+                                            <td>@cus["ProductName"]</td>
+                                            <td>@cus["UnitsInStock"]</td>
+                                            <td>@cus["UnitPrice"].ToString("N2")</td>
+                                            <td>@cus["SalePrice"].ToString("N2")</td>
+                                            <td class="text-center">@cus["Discontinued"]</td>
                                             <td class="text-center justify-content-between">
-                                                <a class="btn bg-gradient-info btn-xs" asp-action="EditCustomerStatus" asp-controller="Home" asp-route-id="@cus["CustomerStatus_ID"]">
+                                                <a class="btn bg-gradient-info btn-xs" asp-action="EditProduct" asp-controller="Home" asp-route-id="@cus["Product_ID"]">
                                                     <i class="fas fa-edit"></i> Editar
                                                 </a>
-                                                <a class="btn bg-gradient-danger btn-xs" asp-action="DeleteCustomerStatus" asp-controller="Home" asp-route-id="@cus["CustomerStatus_ID"]">
+                                                <a class="btn bg-gradient-danger btn-xs" asp-action="DeleteProduct" asp-controller="Home" asp-route-id="@cus["Product_ID"]">
                                                     <i class="fas fa-trask"></i> Eliminar
                                                 </a>
                                             </td>
@@ -103,8 +111,12 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th>Tipo de Cliente</th>
-                                        <th>Orden</th>
+                                        <th>Código</th>
+                                        <th>Nombre del Producto</th>
+                                        <th>Stock</th>
+                                        <th>Precio de Costo</th>
+                                        <th>Precio de Venta</th>
+                                        <th>Descontinuado?</th>
                                         <th>Acción</th>
                                     </tr>
                                 </tfoot>
@@ -114,37 +126,48 @@
                         {
                             <div class="card">
                                 <div class="card-header">
-                                    Aún no hay estatus registrados
+                                    Aún no hay productos registrados
                                 </div>
                             </div>
                         }
                     </div>
-                    <!-- /.card-body -->
                 </div>
 
-                <!-- /.modal Crear Cliente -->
+                <!-- /.modal Crear Producto -->
                 <div class="modal fade" id="modal-lg-create">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header bg-info">
-                                <h4 class="modal-title">Creando Estatus</h4>
+                                <h4 class="modal-title">Creando Producto</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <form asp-action="CreateCustomerStatus" method="post" enctype="multipart/form-data">
+                            <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
                                 <div class="modal-body">
                                     <div class="card">
                                         <!-- form start -->
                                         <div class="card-body">
                                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <div class="form-group-sm">
-                                                <label asp-for="CustomerStatusDisplay">Estatus</label>
-                                                <input type="text" class="form-control" id="CustomerStatusDisplay" asp-for="CustomerStatusDisplay" placeholder="Estatus" maxlength="100" required>
+                                                <label for="CodeProduct">Código</label>
+                                                <input type="text" class="form-control" id="CodeProduct" asp-for="CodeProduct" placeholder="Código" maxlength="100" required>
                                             </div>
                                             <div class="form-group-sm">
-                                                <label for="Order">Orden</label>
-                                                <input type="number" class="form-control" id="Order" asp-for="Order" placeholder="Orden" required>
+                                                <label asp-for="ProductName">Nombre del Producto</label>
+                                                <input type="text" class="form-control" id="ProductName" asp-for="ProductName" placeholder="Nombre del Producto" maxlength="300" required>
+                                            </div>
+                                            <div class="form-group-sm">
+                                                <label asp-for="UnitsInStock">Stock</label>
+                                                <input type="text" class="form-control" id="UnitsInStock" asp-for="UnitsInStock" placeholder="Stock" required>
+                                            </div>
+                                            <div class="form-group-sm">
+                                                <label asp-for="UnitPrice">Precio por Unidad</label>
+                                                <input type="text" class="form-control" id="UnitPrice" asp-for="UnitPrice" placeholder="Precio por Unidad" required>
+                                            </div>
+                                            <div class="form-group-sm">
+                                                <label asp-for="PorcentajeGanancia">Porcentaje de Ganancia %</label>
+                                                <input type="number" class="form-control" id="PorcentajeGanancia" asp-for="PorcentajeGanancia" placeholder="Porcentaje de Ganancia" min="0" value="15" required>
                                             </div>
                                         </div>
                                     </div>

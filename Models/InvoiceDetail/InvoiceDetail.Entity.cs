@@ -19,4 +19,7 @@ public class InvoiceDetail
 
     public int Product_ID { get; set; }
     public Product Products { get; set; }
+
+    public int Invoice_ID { get; set; }
+    public Invoice Invoices { get; set; }
 }

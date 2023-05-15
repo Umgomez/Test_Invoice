@@ -25,7 +25,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <a class="btn btn-app bg-info" data-toggle="modal" data-target="#modal-lg-create">
+                        <a class="btn btn-app bg-info" href="@Url.Action("CreateInvoice", "Home")">
                             <i class="fas fa-plus"></i> Nueva Factura
                         </a>
                     </div>
@@ -39,26 +39,6 @@
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                                 <h5><i class="icon fas fa-check"></i> Good!</h5>
                                 Factura registrada con éxito!
-                            </div>
-                        </div>
-                    }
-                    if (ViewBag.Message == "update")
-                    {
-                        <div class="col-lg-12 mb-3">
-                            <div id="alert" class="alert alert-info alert-dismissible animated fadeInDown animation-delay-4">
-                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                <h5><i class="icon fas fa-info"></i> Good!</h5>
-                                Factura actualizada con éxito!
-                            </div>
-                        </div>
-                    }
-                    if (ViewBag.Message == "delete")
-                    {
-                        <div class="col-lg-12 mb-3">
-                            <div id="alert" class="alert alert-info alert-dismissible animated fadeInDown animation-delay-4">
-                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                <h5><i class="icon fas fa-info"></i> Good!</h5>
-                                Factura borrada con éxito!
                             </div>
                         </div>
                     }
@@ -81,6 +61,7 @@
                                 <thead>
                                     <tr>
                                         <th>Nombre del Cliente</th>
+                                        <th>Fecha</th>
                                         <th>ITBIS</th>
                                         <th>Sub Total</th>
                                         <th>Total</th>
@@ -92,15 +73,13 @@
                                     {
                                         <tr>
                                             <td>@cus["CustomerName"]</td>
-                                            <td>@cus["TotalItbis"]</td>
-                                            <td>@cus["SubTotal"]</td>
-                                            <td>@cus["Total"]</td>
+                                            <td>@cus["CreatedDate"].ToString("dd MMM yyyy hh:mm tt")</td>
+                                            <td>@cus["TotalItbis"].ToString("N2")</td>
+                                            <td>@cus["SubTotal"].ToString("N2")</td>
+                                            <td>@cus["Total"].ToString("N2")</td>
                                             <td class="text-center justify-content-between">
-                                                <a class="btn bg-gradient-info btn-xs" asp-action="EditInvoice" asp-controller="Home" asp-route-id="@cus["Invoice_ID"]">
-                                                    <i class="fas fa-edit"></i> Editar
-                                                </a>
-                                                <a class="btn bg-gradient-danger btn-xs" asp-action="DeleteInvoice" asp-controller="Home" asp-route-id="@cus["Invoice_ID"]">
-                                                    <i class="fas fa-trask"></i> Eliminar
+                                                <a class="btn bg-gradient-info btn-xs" asp-action="DetailInvoice" asp-controller="Home" asp-route-id="@cus["Invoice_ID"]">
+                                                    <i class="fas fa-eye"></i> Detalle
                                                 </a>
                                             </td>
                                         </tr>
@@ -109,6 +88,7 @@
                                 <tfoot>
                                     <tr>
                                         <th>Nombre del Cliente</th>
+                                        <th>Fecha</th>
                                         <th>ITBIS</th>
                                         <th>Sub Total</th>
                                         <th>Total</th>
@@ -125,42 +105,6 @@
                                 </div>
                             </div>
                         }
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-
-                <!-- /.modal Crear Cliente -->
-                <div class="modal fade" id="modal-lg-create">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header bg-info">
-                                <h4 class="modal-title">Creando Factura</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <form asp-action="CreateInvoice" method="post" enctype="multipart/form-data">
-                                <div class="modal-body">
-                                    <div class="card">
-                                        <!-- form start -->
-                                        <div class="card-body">
-                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                            <div class="form-group-sm">
-                                                <label asp-for="Customer_ID">Cliente</label>
-                                                <select id="Customer_ID" asp-for="Customer_ID" class="form-control" asp-items="@ViewBag.Customers" required>
-                                                    <option selected=""></option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer justify-content-between">
-                                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save "></i> Guardar</button>
-                                </div>
-                            </form>
-                        </div>
-
                     </div>
                 </div>
             </div>

@@ -2,12 +2,17 @@
 
 public class InvoiceViewModel
 {
-    public int Invoice_ID { get; set; }
+    public int Customer_ID { get; set; }
     public decimal TotalItbis { get; set; }
     public decimal SubTotal { get; set; }
     public decimal Total { get; set; }
-
-    public int Customer_ID { get; set; }
-
-    public int InvoiceDetail_ID { get; set; }
+    public List<InvoiceDetail> InvoiceDetails { get; set; }
+    
+    public int Qty { get; set; }
+    public decimal Price { get; set; }
+    //public DateTime CreatedDate { get; set; }
+    
+    public int Product_ID { get; set; }
+    public string CodeProduct { get; set; }
+    public string ProductName { get; set; }
 }

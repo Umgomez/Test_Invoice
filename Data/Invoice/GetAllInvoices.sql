@@ -5,7 +5,7 @@ SELECT i.Invoice_ID
 	, i.Total 
 	, i.Customer_ID 
 	, c.CustomerName
-	, i.InvoiceDetail_ID 
+	, i.CreatedDate
 FROM Invoice i
 	INNER JOIN Customer c ON c.Customer_ID = i.Customer_ID 
  WHERE (i.Customer_ID = @VarCustomerID OR ISNULL(@VarCustomerID, '') = '')

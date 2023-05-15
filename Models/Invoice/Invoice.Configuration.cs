@@ -18,9 +18,11 @@ public class InvoiceConfiguration
               .HasPrecision(18, 2);
             opt.Property(x => x.Total)
               .HasPrecision(18, 2);
+            opt.Property(x => x.CreatedDate)
+              .HasDefaultValueSql("(GETDATE())");
 
             #region Constraints
-            opt.HasIndex(x => new { x.Customer_ID })
+            opt.HasIndex(x => new { x.Invoice_ID })
               .HasDatabaseName("UQ_Invoices")
               .IsUnique();
             #endregion
@@ -29,9 +31,6 @@ public class InvoiceConfiguration
             opt.HasOne(x => x.Customers)
               .WithMany()
               .HasForeignKey(x => x.Customer_ID);
-            opt.HasOne(x => x.InvoiceDetails)
-              .WithMany()
-              .HasForeignKey(x => x.InvoiceDetail_ID);
             #endregion
         });
 

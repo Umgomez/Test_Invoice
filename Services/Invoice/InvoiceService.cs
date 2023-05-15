@@ -6,7 +6,6 @@ namespace Test_Invoice.Services;
 public interface IInvoiceService
 {
     Task<Return> GetAllInvoices(int? customerId);
-    Task<Return> GetAllInvoiceDetails(int? customerId);
 }
 
 public class InvoiceService : IInvoiceService
@@ -31,15 +30,4 @@ public class InvoiceService : IInvoiceService
         return new Return($"File '{file}' data").SetData(entityData);
     }
 
-    public async Task<Return> GetAllInvoiceDetails(int? customerId)
-    {
-        var sql = new Sql(this.context);
-        var file = "GetAllInvoiceDetails";
-        var query = File.ReadAllText($"Data/InvoiceDetail/{file}.sql");
-        var data = new Dictionary<string, object> { { "CustomerID", customerId } };
-        query = await sql.QueryFormat(query, data);
-        var entityData = await sql.OneQuery(query);
-
-        return new Return($"File '{file}' data").SetData(entityData);
-    }
 }

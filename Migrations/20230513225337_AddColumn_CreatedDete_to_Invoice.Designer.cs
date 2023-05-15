@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Test_Invoice.Data;
 
@@ -11,9 +12,10 @@ using Test_Invoice.Data;
 namespace Test_Invoice.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230513225337_AddColumn_CreatedDete_to_Invoice")]
+    partial class AddColumn_CreatedDete_to_Invoice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,6 +223,9 @@ namespace Test_Invoice.Migrations
                     b.Property<int>("Customer_ID")
                         .HasColumnType("int");
 
+                    b.Property<int>("InvoiceDetail_ID")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("SubTotal")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -235,11 +240,11 @@ namespace Test_Invoice.Migrations
 
                     b.HasKey("Invoice_ID");
 
-                    b.HasIndex("Customer_ID");
-
-                    b.HasIndex("Invoice_ID")
+                    b.HasIndex("Customer_ID")
                         .IsUnique()
                         .HasDatabaseName("UQ_Invoices");
+
+                    b.HasIndex("InvoiceDetail_ID");
 
                     b.ToTable("Invoice", (string)null);
                 });
@@ -253,9 +258,6 @@ namespace Test_Invoice.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceDetail_ID"), 1L, 1);
 
                     b.Property<int>("Customer_ID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Invoice_ID")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -282,21 +284,17 @@ namespace Test_Invoice.Migrations
 
                     b.HasKey("InvoiceDetail_ID");
 
-                    b.HasIndex("Customer_ID");
-
-                    b.HasIndex("InvoiceDetail_ID")
+                    b.HasIndex("Customer_ID")
                         .IsUnique()
                         .HasDatabaseName("UQ_InvoiceDetails");
-
-                    b.HasIndex("Invoice_ID");
 
                     b.HasIndex("Product_ID");
 
                     b.ToTable("InvoiceDetail", (string)null);
 
-                    b.HasCheckConstraint("CHK_Price", "Price <> 0");
+                    b.HasCheckConstraint("CHK_Price", "Price <> ''");
 
-                    b.HasCheckConstraint("CHK_Qty", "Qty <> 0");
+                    b.HasCheckConstraint("CHK_Qty", "Qty <> ''");
                 });
 
             modelBuilder.Entity("Test_Invoice.Models.Product", b =>
@@ -419,7 +417,15 @@ namespace Test_Invoice.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Test_Invoice.Models.InvoiceDetail", "InvoiceDetails")
+                        .WithMany()
+                        .HasForeignKey("InvoiceDetail_ID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Customers");
+
+                    b.Navigation("InvoiceDetails");
                 });
 
             modelBuilder.Entity("Test_Invoice.Models.InvoiceDetail", b =>
@@ -430,12 +436,6 @@ namespace Test_Invoice.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Test_Invoice.Models.Invoice", "Invoices")
-                        .WithMany()
-                        .HasForeignKey("Invoice_ID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Test_Invoice.Models.Product", "Products")
                         .WithMany()
                         .HasForeignKey("Product_ID")
@@ -443,8 +443,6 @@ namespace Test_Invoice.Migrations
                         .IsRequired();
 
                     b.Navigation("Customers");
-
-                    b.Navigation("Invoices");
 
                     b.Navigation("Products");
                 });

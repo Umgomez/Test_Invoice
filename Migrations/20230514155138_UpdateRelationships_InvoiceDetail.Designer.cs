@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Test_Invoice.Data;
 
@@ -11,9 +12,10 @@ using Test_Invoice.Data;
 namespace Test_Invoice.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230514155138_UpdateRelationships_InvoiceDetail")]
+    partial class UpdateRelationships_InvoiceDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,9 +237,7 @@ namespace Test_Invoice.Migrations
 
                     b.HasKey("Invoice_ID");
 
-                    b.HasIndex("Customer_ID");
-
-                    b.HasIndex("Invoice_ID")
+                    b.HasIndex("Customer_ID")
                         .IsUnique()
                         .HasDatabaseName("UQ_Invoices");
 
@@ -282,9 +282,7 @@ namespace Test_Invoice.Migrations
 
                     b.HasKey("InvoiceDetail_ID");
 
-                    b.HasIndex("Customer_ID");
-
-                    b.HasIndex("InvoiceDetail_ID")
+                    b.HasIndex("Customer_ID")
                         .IsUnique()
                         .HasDatabaseName("UQ_InvoiceDetails");
 
@@ -294,9 +292,9 @@ namespace Test_Invoice.Migrations
 
                     b.ToTable("InvoiceDetail", (string)null);
 
-                    b.HasCheckConstraint("CHK_Price", "Price <> 0");
+                    b.HasCheckConstraint("CHK_Price", "Price <> ''");
 
-                    b.HasCheckConstraint("CHK_Qty", "Qty <> 0");
+                    b.HasCheckConstraint("CHK_Qty", "Qty <> ''");
                 });
 
             modelBuilder.Entity("Test_Invoice.Models.Product", b =>

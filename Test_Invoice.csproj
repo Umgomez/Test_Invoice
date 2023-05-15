@@ -21,8 +21,8 @@
     <Folder Include="Data\CustomerType\" />
     <Folder Include="Data\Customer\" />
     <Folder Include="Data\CustomerStatus\" />
-    <Folder Include="Data\InvoiceDetail\" />
     <Folder Include="Data\Invoice\" />
+    <Folder Include="Data\Product\" />
   </ItemGroup>
 
 </Project>

@@ -19,6 +19,9 @@
     <!-- SweetAlert2 -->
     <link media="screen" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css" asp-append-version="true" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js" asp-append-version="true"></script>
+    <!-- Select2 -->
+    <link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="~/assets/css/adminlte.min.css" asp-append-version="true">
     <!-- IonIcons -->
@@ -76,6 +79,12 @@
                                 <p>Estatus</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("ProductList", "Home")" class="nav-link">
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>Productos</p>
+                            </a>
+                        </li>
                         <li class="nav-header">FACTURA</li>
                         <li class="nav-item">
                             <a href="@Url.Action("InvoiceList", "Home")" class="nav-link">
@@ -113,6 +122,8 @@
     </script>
     <!-- Bootstrap 4 -->
     <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <!-- Select2 -->
+    <script src="~/plugins/select2/js/select2.full.min.js"></script>
     <!-- ChartJS -->
     <script src="~/plugins/chart.js/Chart.min.js" asp-append-version="true"></script>
     <!-- daterangepicker -->
@@ -150,6 +161,13 @@
     <!-- Page specific script -->
     <script type="text/javascript" asp-append-version="true">
         $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2();
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            });
+
             $("#example1").DataTable({
                 "responsive": true, "lengthChange": false, "autoWidth": false,
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
